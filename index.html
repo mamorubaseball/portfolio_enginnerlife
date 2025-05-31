@@ -4,1681 +4,335 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>エンジニアライフ - Modern Portfolio</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
-        
-        :root {
-            /* Vibrant Design System */
-            --neon-blue: #00ffff;
-            --electric-purple: #8b5cf6;
-            --neon-green: #00ff88;
-            --cyber-pink: #ff0080;
-            --deep-space: #0a0a0f;
-            --space-gray: #1a1a2e;
-            --dark-surface: #16213e;
-            --glass-surface: rgba(255, 255, 255, 0.05);
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0b0;
-            --accent-glow: #00ffff80;
-            
-            /* Fitness Mode */
-            --fitness-orange: #ff6b35;
-            --fitness-red: #ff3030;
-            --fitness-gold: #ffd700;
-            --fitness-dark: #1a0f0a;
-            --fitness-surface: #2a1a15;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        /* Custom cursor */
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--deep-space);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            cursor: none;
-            position: relative;
-        }
-        
-        /* Futuristic Custom Cursor */
-        .custom-cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            background: var(--neon-blue);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10000;
-            mix-blend-mode: difference;
-            transition: transform 0.1s ease;
-        }
-        
-        .cursor-trail {
-            position: fixed;
-            width: 4px;
-            height: 4px;
-            background: var(--electric-purple);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0.6;
-        }
-        
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--deep-space);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(45deg, var(--neon-blue), var(--electric-purple));
-            border-radius: 4px;
-        }
-        
-        /* Animated Loader */
-        .loader-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--deep-space);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            transition: opacity 0.8s ease;
-        }
-        
-        .loader {
-            position: relative;
-            width: 120px;
-            height: 120px;
-        }
-        
-        .loader::before,
-        .loader::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 3px solid transparent;
-            border-top: 3px solid var(--neon-blue);
-            border-right: 3px solid var(--electric-purple);
-            border-radius: 50%;
-            animation: spin 2s linear infinite;
-        }
-        
-        .loader::after {
-            width: 80%;
-            height: 80%;
-            top: 10%;
-            left: 10%;
-            border-top: 3px solid var(--cyber-pink);
-            border-right: 3px solid var(--neon-green);
-            animation: spin 1.5s linear infinite reverse;
-        }
-        
-        .loader-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            color: var(--neon-blue);
-            letter-spacing: 2px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        /* Background Animation */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-        
-        .bg-grid {
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: 
-                linear-gradient(var(--accent-glow) 1px, transparent 1px),
-                linear-gradient(90deg, var(--accent-glow) 1px, transparent 1px);
-            background-size: 100px 100px;
-            opacity: 0.1;
-            animation: gridMove 20s linear infinite;
-        }
-        
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(100px, 100px); }
-        }
-        
-        .floating-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .floating-element {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.1;
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
-        }
-        
-        /* Navigation */
-        .nav-container {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            backdrop-filter: blur(20px);
-            background: var(--glass-surface);
-            border: 1px solid var(--accent-glow);
-            border-radius: 50px;
-            padding: 10px 20px;
-        }
-        
-        .nav-menu {
-            display: flex;
-            gap: 30px;
-            list-style: none;
-            align-items: center;
-        }
-        
-        .nav-item a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            padding: 8px 16px;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .nav-item a::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .nav-item a:hover::before {
-            left: 100%;
-        }
-        
-        .nav-item a:hover,
-        .nav-item a.active {
-            color: var(--text-primary);
-            background: var(--glass-surface);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-        
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 50px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .hero-content {
-            position: relative;
-        }
-        
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--glass-surface);
-            border: 1px solid var(--accent-glow);
-            border-radius: 25px;
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            margin-bottom: 30px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--neon-green);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        
-        .hero-title {
-            font-size: clamp(3rem, 8vw, 6rem);
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 30px;
-            background: linear-gradient(45deg, var(--neon-blue), var(--electric-purple), var(--cyber-pink));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            position: relative;
-        }
-        
-        .hero-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--neon-blue), var(--electric-purple));
-            border-radius: 2px;
-        }
-        
-        .hero-subtitle {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 40px;
-            max-width: 600px;
-        }
-        
-        .hero-cta {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(45deg, var(--neon-blue), var(--electric-purple));
-            color: var(--deep-space);
-            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            color: var(--text-primary);
-            border: 2px solid var(--accent-glow);
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.4);
-        }
-        
-        /* Hero Visual */
-        .hero-visual {
-            position: relative;
-            height: 600px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .hero-image {
-            width: 400px;
-            height: 400px;
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            transform: perspective(1000px) rotateY(-15deg);
-            transition: transform 0.5s ease;
-            border: 2px solid var(--accent-glow);
-        }
-        
-        .hero-image:hover {
-            transform: perspective(1000px) rotateY(0deg);
-        }
-        
-        .hero-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .hero-image::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, var(--accent-glow), transparent);
-            animation: scan 3s ease-in-out infinite;
-            z-index: 1;
-        }
-        
-        @keyframes scan {
-            0% { transform: translateX(-100%) translateY(-100%); }
-            100% { transform: translateX(100%) translateY(100%); }
-        }
-        
-        /* Mode Toggle */
-        .mode-toggle {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background: var(--glass-surface);
-            border: 2px solid var(--accent-glow);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .mode-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px var(--accent-glow);
-        }
-        
-        .mode-toggle i {
-            font-size: 1.5rem;
-            color: var(--neon-blue);
-        }
-        
-        /* Content Sections */
-        .section {
-            padding: 100px 0;
-            position: relative;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 50px;
-        }
-        
-        .section-header {
-            text-align: center;
-            margin-bottom: 80px;
-        }
-        
-        .section-title {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 800;
-            margin-bottom: 20px;
-            background: linear-gradient(45deg, var(--neon-blue), var(--electric-purple));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .section-subtitle {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        /* Projects Grid */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
-        }
-        
-        .project-card {
-            background: var(--glass-surface);
-            border: 1px solid var(--accent-glow);
-            border-radius: 20px;
-            padding: 30px;
-            backdrop-filter: blur(20px);
-            transition: all 0.5s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
-            transition: left 0.5s ease;
-            opacity: 0.1;
-        }
-        
-        .project-card:hover::before {
-            left: 100%;
-        }
-        
-        .project-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.2);
-        }
-        
-        .project-image {
-            width: 100%;
-            height: 200px;
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        
-        .project-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .project-card:hover .project-image img {
-            transform: scale(1.1);
-        }
-        
-        .project-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: var(--text-primary);
-        }
-        
-        .project-desc {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-        
-        .project-tech {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .tech-tag {
-            background: var(--dark-surface);
-            color: var(--neon-blue);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        
-        /* Skills Section */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 60px;
-        }
-        
-        .skill-category {
-            background: var(--glass-surface);
-            border: 1px solid var(--accent-glow);
-            border-radius: 20px;
-            padding: 30px;
-            backdrop-filter: blur(20px);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .skill-category:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 255, 255, 0.2);
-        }
-        
-        .skill-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(45deg, var(--neon-blue), var(--electric-purple));
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 1.5rem;
-            color: var(--deep-space);
-        }
-        
-        .skill-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: var(--text-primary);
-        }
-        
-        .skill-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-        }
-        
-        .skill-item {
-            background: var(--dark-surface);
-            color: var(--text-secondary);
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-        
-        .skill-item:hover {
-            background: var(--neon-blue);
-            color: var(--deep-space);
-        }
-        
-        /* Contact Section */
-        .contact-form {
-            max-width: 600px;
-            margin: 0 auto;
-            background: var(--glass-surface);
-            border: 1px solid var(--accent-glow);
-            border-radius: 20px;
-            padding: 40px;
-            backdrop-filter: blur(20px);
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-        
-        .form-input,
-        .form-textarea {
-            width: 100%;
-            padding: 15px;
-            background: var(--dark-surface);
-            border: 1px solid var(--accent-glow);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus,
-        .form-textarea:focus {
-            outline: none;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-        }
-        
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        /* Footer */
-        .footer {
-            background: var(--space-gray);
-            padding: 60px 0 30px;
-            text-align: center;
-            border-top: 1px solid var(--accent-glow);
-        }
-        
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .social-link {
-            width: 50px;
-            height: 50px;
-            background: var(--glass-surface);
-            border: 1px solid var(--accent-glow);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--neon-blue);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .social-link:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-        
-        /* Fitness Mode Styles */
-        body.fitness-mode {
-            --neon-blue: var(--fitness-orange);
-            --electric-purple: var(--fitness-red);
-            --cyber-pink: var(--fitness-gold);
-            --deep-space: var(--fitness-dark);
-            --space-gray: var(--fitness-surface);
-            --accent-glow: #ff6b3580;
-        }
-        
-        body.fitness-mode .works-section,
-        body.fitness-mode .skills-section {
-            display: none;
-        }
-        
-        body.fitness-mode .progress-section {
-            display: block;
-        }
-        
-        .progress-section {
-            display: none;
-        }
-        
-        /* Transformation Styles */
-        .transformation-container {
-            margin-bottom: 40px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-        
-        .transformation-title {
-            text-align: center;
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-        
-        .transformation-images {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-        }
-        
-        .image-container {
-            flex: 1;
-            min-width: 280px;
-            text-align: center;
-        }
-        
-        .image-container h4 {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: var(--neon-blue);
-        }
-        
-        .before-image, .after-image {
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            position: relative;
-            transition: all 0.3s ease;
-            height: 400px; /* 固定の高さを設定 */
-            width: 100%;
-        }
-        
-        .before-image:hover, .after-image:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-        }
-        
-        .before-image img, .after-image img {
-            width: 100%;
-            height: 400px; /* 固定の高さを設定 */
-            object-fit: cover; /* 画像比率を維持しながら領域を埋める */
-            object-position: center; /* 中央に配置 */
-            display: block;
-            transition: transform 0.5s ease;
-        }
-        
-        .before-image:hover img, .after-image:hover img {
-            transform: scale(1.05);
-        }
-        
-        .transformation-caption {
-            text-align: center;
-            margin-top: 25px;
-            color: var(--text-secondary);
-            font-style: italic;
-        }
-        
-        .progress-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-bottom: 50px;
-        }
-        
-        .stat-card {
-            background: var(--glass-surface);
-            border: 1px solid var(--accent-glow);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            backdrop-filter: blur(20px);
-            transition: all 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(255, 107, 53, 0.3);
-        }
-        
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: var(--neon-blue);
-            margin-bottom: 10px;
-        }
-        
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-        
-        .progress-bars {
-            space-y: 25px;
-        }
-        
-        .progress-item {
-            margin-bottom: 25px;
-        }
-        
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        
-        .progress-name {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-        
-        .progress-percent {
-            color: var(--neon-blue);
-            font-weight: 600;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--dark-surface);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--neon-blue), var(--electric-purple));
-            border-radius: 4px;
-            transition: width 2s ease;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .hero-container {
-                grid-template-columns: 1fr;
-                gap: 50px;
-                text-align: center;
-            }
-            
-            .nav-container {
-                position: relative;
-                top: 0;
-                left: 0;
-                transform: none;
-                margin: 20px;
-                border-radius: 15px;
-            }
-            
-            .nav-menu {
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-            
-            .projects-grid,
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .hero-visual {
-                height: 400px;
-            }
-            
-            .hero-image {
-                width: 300px;
-                height: 300px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 20px;
-            }
-            
-            .hero-container {
-                padding: 0 20px;
-            }
-            
-            .mode-toggle {
-                width: 50px;
-                height: 50px;
-                bottom: 20px;
-                right: 20px;
-            }
-        }
-        
-        /* Utility Classes */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
-        
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* Screen shake animation */
-        @keyframes screenShake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-        
-        .text-gradient {
-            background: linear-gradient(45deg, var(--neon-blue), var(--electric-purple));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Custom Cursor -->
-    <div class="custom-cursor"></div>
-    
-    <!-- Loader -->
-    <div class="loader-wrapper">
-        <div class="loader">
-            <div class="loader-text">LOADING</div>
+<div class="custom-cursor"></div>
+
+<div class="loader-wrapper">
+    <div class="loader">
+        <div class="loader-text">LOADING</div>
+    </div>
+</div>
+
+<div class="bg-animation">
+    <div class="bg-grid"></div>
+    <div class="floating-elements"></div>
+</div>
+
+<nav class="nav-container">
+    <ul class="nav-menu">
+        <li class="nav-item"><a href="#home" class="active">Home</a></li>
+        <li class="nav-item engineer-only"><a href="#projects">Projects</a></li>
+        <li class="nav-item engineer-only"><a href="#skills">Skills</a></li>
+        <li class="nav-item fitness-only"><a href="#progress">Progress</a></li>
+        <li class="nav-item"><a href="#contact">Contact</a></li>
+    </ul>
+</nav>
+
+<section id="home" class="hero">
+    <div class="hero-container">
+        <div class="hero-content fade-in">
+            <div class="hero-badge">
+                <div class="status-dot"></div>
+                <span class="status-text">Available for work</span>
+            </div>
+            <h1 class="hero-title">
+                <span class="title-main">エンジニア</span><br>
+                <span class="title-sub">ライフ</span>
+            </h1>
+            <p class="hero-subtitle">
+                学生時代に学生団体の立ち上げからWebサービスの開発まで経験し、そこで得た「アプリケーションで世界を変える」という確信を胸に、大手テックカンパニーに就職。現在は3年目のバックエンドエンジニアとして革新的なプロダクトを開発しています。
+            </p>
+            <div class="hero-cta">
+                <a href="#projects" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    View Projects
+                </a>
+                <a href="#contact" class="btn btn-secondary">
+                    <i class="fas fa-envelope"></i>
+                    Get in Touch
+                </a>
+            </div>
+        </div>
+        <div class="hero-visual fade-in">
+            <div class="hero-image">
+                <img src="nrcds5xpf7.jpg" alt="Profile" id="hero-profile-img" style="object-fit: cover; width: 100%; height: 100%; object-position: center center;">
+            </div>
         </div>
     </div>
-    
-    <!-- Background Animation -->
-    <div class="bg-animation">
-        <div class="bg-grid"></div>
-        <div class="floating-elements"></div>
-    </div>
-    
-    <!-- Navigation -->
-    <nav class="nav-container">
-        <ul class="nav-menu">
-            <li class="nav-item"><a href="#home" class="active">Home</a></li>
-            <li class="nav-item engineer-only"><a href="#projects">Projects</a></li>
-            <li class="nav-item engineer-only"><a href="#skills">Skills</a></li>
-            <li class="nav-item fitness-only"><a href="#progress">Progress</a></li>
-            <li class="nav-item"><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
-    
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-container">
-            <div class="hero-content fade-in">
-                <div class="hero-badge">
-                    <div class="status-dot"></div>
-                    <span class="status-text">Available for work</span>
+</section>
+
+<section id="projects" class="section works-section">
+    <div class="container">
+        <div class="section-header fade-in">
+            <h2 class="section-title">FEATURED WORKS</h2>
+            <p class="section-subtitle">Check out some of my recent projects and collaborations</p>
+        </div>
+
+        <div class="projects-grid">
+            <div class="project-card fade-in">
+                <div class="project-image">
+                    <img src="https://cdn.pixabay.com/photo/2015/07/02/10/22/training-828726_640.jpg" alt="Fitness Matching App">
                 </div>
-                <h1 class="hero-title">
-                    <span class="title-main">エンジニア</span><br>
-                    <span class="title-sub">ライフ</span>
-                </h1>
-                <p class="hero-subtitle">
-                    学生時代に学生団体の立ち上げからWebサービスの開発まで経験し、そこで得た「アプリケーションで世界を変える」という確信を胸に、大手テックカンパニーに就職。現在は3年目のバックエンドエンジニアとして革新的なプロダクトを開発しています。
+                <h3 class="project-title">筋トレ好きのためのマッチングアプリ</h3>
+                <p class="project-desc">
+                    同じトレーニング目標を持つ仲間と出会い、モチベーションを高め合えるアプリケーション。リアルタイムマッチングとコミュニケーション機能を実装。
                 </p>
-                <div class="hero-cta">
-                    <a href="#projects" class="btn btn-primary">
-                        <i class="fas fa-rocket"></i>
-                        View Projects
-                    </a>
-                    <a href="#contact" class="btn btn-secondary">
-                        <i class="fas fa-envelope"></i>
-                        Get in Touch
-                    </a>
+                <div class="project-tech">
+                    <span class="tech-tag">React Native</span>
+                    <span class="tech-tag">Firebase</span>
+                    <span class="tech-tag">Node.js</span>
                 </div>
             </div>
-            <div class="hero-visual fade-in">
-                <div class="hero-image">
-                    <img src="nrcds5xpf7.jpg" alt="Profile" id="hero-profile-img" style="object-fit: cover; width: 100%; height: 100%; object-position: center center;">
+
+            <div class="project-card fade-in">
+                <div class="project-image">
+                    <img src="https://cdn.pixabay.com/photo/2023/09/11/14/19/weight-8246973_640.jpg" alt="AI Prompt Share">
+                </div>
+                <h3 class="project-title">AI Prompt Share</h3>
+                <p class="project-desc">
+                    プロンプトをシェアするwebサイト。AIとの効果的なコミュニケーション方法を共有できるプラットフォームです。
+                </p>
+                <div class="project-tech">
+                    <span class="tech-tag">Next.js</span>
+                    <span class="tech-tag">MongoDB</span>
+                    <span class="tech-tag">OpenAI API</span>
                 </div>
             </div>
-        </div>
-    </section>    <!-- Projects Section -->
-    <section id="projects" class="section works-section">
-        <div class="container">
-            <div class="section-header fade-in">
-                <h2 class="section-title">FEATURED WORKS</h2>
-                <p class="section-subtitle">Check out some of my recent projects and collaborations</p>
-            </div>
-            
-            <div class="projects-grid">
-                <div class="project-card fade-in">
-                    <div class="project-image">
-                        <img src="https://cdn.pixabay.com/photo/2015/07/02/10/22/training-828726_640.jpg" alt="Fitness Matching App">
-                    </div>
-                    <h3 class="project-title">筋トレ好きのためのマッチングアプリ</h3>
-                    <p class="project-desc">
-                        同じトレーニング目標を持つ仲間と出会い、モチベーションを高め合えるアプリケーション。リアルタイムマッチングとコミュニケーション機能を実装。
-                    </p>
-                    <div class="project-tech">
-                        <span class="tech-tag">React Native</span>
-                        <span class="tech-tag">Firebase</span>
-                        <span class="tech-tag">Node.js</span>
-                    </div>
+
+            <div class="project-card fade-in">
+                <div class="project-image">
+                    <img src="https://cdn.pixabay.com/photo/2016/11/29/09/10/man-1868632_640.jpg" alt="Personal Training App">
                 </div>
-                
-                <div class="project-card fade-in">
-                    <div class="project-image">
-                        <img src="https://cdn.pixabay.com/photo/2023/09/11/14/19/weight-8246973_640.jpg" alt="AI Prompt Share">
-                    </div>
-                    <h3 class="project-title">AI Prompt Share</h3>
-                    <p class="project-desc">
-                        プロンプトをシェアするwebサイト。AIとの効果的なコミュニケーション方法を共有できるプラットフォームです。
-                    </p>
-                    <div class="project-tech">
-                        <span class="tech-tag">Next.js</span>
-                        <span class="tech-tag">MongoDB</span>
-                        <span class="tech-tag">OpenAI API</span>
-                    </div>
-                </div>
-                
-                <div class="project-card fade-in">
-                    <div class="project-image">
-                        <img src="https://cdn.pixabay.com/photo/2016/11/29/09/10/man-1868632_640.jpg" alt="Personal Training App">
-                    </div>
-                    <h3 class="project-title">パーソナルトレーニングアプリ</h3>
-                    <p class="project-desc">
-                        AIを活用した個人に最適化されたトレーニングプランを提供するアプリケーション。機械学習による動作分析も搭載。
-                    </p>
-                    <div class="project-tech">
-                        <span class="tech-tag">Flutter</span>
-                        <span class="tech-tag">TensorFlow</span>
-                        <span class="tech-tag">Python</span>
-                    </div>
+                <h3 class="project-title">パーソナルトレーニングアプリ</h3>
+                <p class="project-desc">
+                    AIを活用した個人に最適化されたトレーニングプランを提供するアプリケーション。機械学習による動作分析も搭載。
+                </p>
+                <div class="project-tech">
+                    <span class="tech-tag">Flutter</span>
+                    <span class="tech-tag">TensorFlow</span>
+                    <span class="tech-tag">Python</span>
                 </div>
             </div>
         </div>
-    </section>
-    
-    <!-- Skills Section -->
-    <section id="skills" class="section skills-section">
-        <div class="container">
-            <div class="section-header fade-in">
-                <h2 class="section-title">SKILLS</h2>
-                <p class="section-subtitle">Technologies and tools I work with</p>
-            </div>
-            
-            <div class="skills-grid">
-                <div class="skill-category fade-in">
-                    <div class="skill-icon">
-                        <i class="fas fa-code"></i>
-                    </div>
-                    <h3 class="skill-title">言語</h3>
-                    <div class="skill-list">
-                        <span class="skill-item">Java</span>
-                        <span class="skill-item">Python</span>
-                        <span class="skill-item">JavaScript</span>
-                        <span class="skill-item">TypeScript</span>
-                        <span class="skill-item">Go</span>
-                    </div>
-                </div>
-                
-                <div class="skill-category fade-in">
-                    <div class="skill-icon">
-                        <i class="fas fa-layer-group"></i>
-                    </div>
-                    <h3 class="skill-title">フレームワーク</h3>
-                    <div class="skill-list">
-                        <span class="skill-item">React</span>
-                        <span class="skill-item">Spring Boot</span>
-                        <span class="skill-item">Django</span>
-                        <span class="skill-item">Next.js</span>
-                        <span class="skill-item">Flutter</span>
-                    </div>
-                </div>
-                
-                <div class="skill-category fade-in">
-                    <div class="skill-icon">
-                        <i class="fas fa-server"></i>
-                    </div>
-                    <h3 class="skill-title">インフラ</h3>
-                    <div class="skill-list">
-                        <span class="skill-item">Docker</span>
-                        <span class="skill-item">Kubernetes</span>
-                        <span class="skill-item">CI/CD</span>
-                        <span class="skill-item">AWS</span>
-                        <span class="skill-item">GCP</span>
-                    </div>
-                </div>
-                
-                <div class="skill-category fade-in">
-                    <div class="skill-icon">
-                        <i class="fas fa-database"></i>
-                    </div>
-                    <h3 class="skill-title">データベース</h3>
-                    <div class="skill-list">
-                        <span class="skill-item">MySQL</span>
-                        <span class="skill-item">PostgreSQL</span>
-                        <span class="skill-item">MongoDB</span>
-                        <span class="skill-item">Redis</span>
-                        <span class="skill-item">Cassandra</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Progress Section (Fitness Mode Only) -->
-    <section id="progress" class="section progress-section">
-        <div class="container">
-            <div class="section-header fade-in">
-                <h2 class="section-title">PROGRESS</h2>
-                <p class="section-subtitle">Tracking my fitness journey and achievements</p>
-            </div>
-            
-            <!-- Before-After Transformation -->
-            <div class="transformation-container fade-in">
-                <h3 class="transformation-title">Body Transformation</h3>
-                <div class="transformation-images">
-                    <div class="image-container">
-                        <h4>Before</h4>
-                        <div class="before-image">
-                            <img src="4f2mgy7li4.jpg" alt="Before Transformation">
-                        </div>
-                    </div>
-                    <div class="image-container">
-                        <h4>After</h4>
-                        <div class="after-image">
-                            <img src="fg719hyg1e.jpg" alt="After Transformation">
-                        </div>
-                    </div>
-                </div>
-                <p class="transformation-caption">3年間のトレーニングによる体の変化。継続は力なり。</p>
-            </div>
-            
-            <div class="progress-stats">
-                <div class="stat-card fade-in">
-                    <i class="fas fa-dumbbell fa-3x" style="color: var(--neon-blue); margin-bottom: 15px;"></i>
-                    <div class="stat-value">100kg</div>
-                    <div class="stat-label">ベンチプレス</div>
-                </div>
-                
-                <div class="stat-card fade-in">
-                    <i class="fas fa-weight-hanging fa-3x" style="color: var(--neon-blue); margin-bottom: 15px;"></i>
-                    <div class="stat-value">200kg</div>
-                    <div class="stat-label">デッドリフト</div>
-                </div>
-                
-                <div class="stat-card fade-in">
-                    <i class="fas fa-running fa-3x" style="color: var(--neon-blue); margin-bottom: 15px;"></i>
-                    <div class="stat-value">140kg</div>
-                    <div class="stat-label">スクワット</div>
-                </div>
-            </div>
-            
-            <div class="progress-bars fade-in">
-                <div class="progress-item">
-                    <div class="progress-header">
-                        <span class="progress-name">筋肉量</span>
-                        <span class="progress-percent">85%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%;" data-width="85%"></div>
-                    </div>
-                </div>
-                
-                <div class="progress-item">
-                    <div class="progress-header">
-                        <span class="progress-name">持久力</span>
-                        <span class="progress-percent">70%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%;" data-width="70%"></div>
-                    </div>
-                </div>
-                
-                <div class="progress-item">
-                    <div class="progress-header">
-                        <span class="progress-name">食事管理</span>
-                        <span class="progress-percent">65%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%;" data-width="65%"></div>
-                    </div>
-                </div>
-                
-                <div class="progress-item">
-                    <div class="progress-header">
-                        <span class="progress-name">柔軟性</span>
-                        <span class="progress-percent">50%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%;" data-width="50%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Contact Section -->
-    <section id="contact" class="section">
-        <div class="container">
-            <div class="section-header fade-in">
-                <h2 class="section-title">CONTACT</h2>
-                <p class="section-subtitle">Get in touch with me for collaborations or inquiries</p>
-            </div>
-            
-            <div class="contact-form fade-in">
-                <div class="form-group">
-                    <label for="name" class="form-label">お名前</label>
-                    <input type="text" id="name" class="form-input" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email" class="form-label">メールアドレス</label>
-                    <input type="email" id="email" class="form-input" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="message" class="form-label">メッセージ</label>
-                    <textarea id="message" class="form-textarea" required></textarea>
-                </div>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    送信する
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="social-links">
-                <a href="https://x.com/EngineerMacho" class="social-link" target="_blank">
-                    <i class="fab fa-twitter"></i>
-                </a>
-                <a href="https://github.com/mamorubaseball" class="social-link" target="_blank">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://www.instagram.com/bodymakeengineer/" class="social-link" target="_blank">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a href="https://mammoblog.com/" class="social-link" target="_blank">
-                    <i class="fas fa-blog"></i>
-                </a>
-            </div>
-            
-            <p style="color: var(--text-secondary); margin-top: 20px;">&copy; 2025 エンジニアライフ. All Rights Reserved.</p>
-        </div>
-    </footer>
-    
-    <!-- Mode Toggle Button -->
-    <div class="mode-toggle">
-        <i class="fas fa-dumbbell"></i>
     </div>
-    
-    <script>
-        // Custom cursor
-        const customCursor = document.createElement('div');
-        customCursor.classList.add('custom-cursor');
-        document.body.appendChild(customCursor);
-        
-        // Cursor trail
-        const trailCount = 10;
-        const trails = [];
-        
-        for (let i = 0; i < trailCount; i++) {
-            const trail = document.createElement('div');
-            trail.classList.add('cursor-trail');
-            trail.style.opacity = (1 - i / trailCount) * 0.6;
-            trails.push(trail);
-            document.body.appendChild(trail);
-        }
-        
-        let mouseX = 0;
-        let mouseY = 0;
-        let trailPositions = Array(trailCount).fill().map(() => ({x: 0, y: 0}));
-        
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            
-            // Update cursor position
-            customCursor.style.left = mouseX + 'px';
-            customCursor.style.top = mouseY + 'px';
-        });
-        
-        function updateTrails() {
-            // Shift positions
-            for (let i = trailCount - 1; i > 0; i--) {
-                trailPositions[i] = {x: trailPositions[i-1].x, y: trailPositions[i-1].y};
-            }
-            
-            trailPositions[0] = {x: mouseX, y: mouseY};
-            
-            // Update trail positions
-            trails.forEach((trail, index) => {
-                trail.style.left = trailPositions[index].x + 'px';
-                trail.style.top = trailPositions[index].y + 'px';
-            });
-            
-            requestAnimationFrame(updateTrails);
-        }
-        
-        updateTrails();
-        
-        // Cursor hover effects
-        document.addEventListener('mouseover', (e) => {
-            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || 
-                e.target.classList.contains('btn') || e.target.classList.contains('project-card')) {
-                customCursor.style.transform = 'scale(1.5)';
-                customCursor.style.mixBlendMode = 'normal';
-                customCursor.style.background = 'rgba(0, 255, 255, 0.5)';
-            }
-        });
-        
-        document.addEventListener('mouseout', (e) => {
-            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || 
-                e.target.classList.contains('btn') || e.target.classList.contains('project-card')) {
-                customCursor.style.transform = 'scale(1)';
-                customCursor.style.mixBlendMode = 'difference';
-                customCursor.style.background = 'var(--neon-blue)';
-            }
-        });
-        
-        // Background floating elements
-        const floatingContainer = document.querySelector('.floating-elements');
-        const elements = [
-            {shape: 'sphere-5398311_1280.png', size: 80},
-            {shape: 'sphere-9628508_1280.png', size: 150},
-            {shape: 'abstract-7731737_1280.jpeg', size: 120},
-            {shape: 'cubes-2803223_1280.jpeg', size: 100},
-            {shape: 'hud-3149462_1280.png', size: 200}
-        ];
-        
-        for (let i = 0; i < 5; i++) {
-            const element = elements[i % elements.length];
-            const floatingEl = document.createElement('div');
-            floatingEl.classList.add('floating-element');
-            
-            const img = document.createElement('img');
-            img.src = element.shape;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'contain';
-            
-            floatingEl.appendChild(img);
-            floatingEl.style.width = element.size + 'px';
-            floatingEl.style.height = element.size + 'px';
-            floatingEl.style.top = Math.random() * 90 + 5 + 'vh';
-            floatingEl.style.left = Math.random() * 90 + 5 + 'vw';
-            floatingEl.style.animationDelay = (Math.random() * 5) + 's';
-            floatingEl.style.animationDuration = (Math.random() * 10 + 10) + 's';
-            
-            floatingContainer.appendChild(floatingEl);
-        }
-        
-        // Intersection Observer for fade-in animations
-        const fadeElements = document.querySelectorAll('.fade-in');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        });
-        
-        fadeElements.forEach(element => {
-            observer.observe(element);
-        });
-        
-        // Mode toggle between engineer and fitness
-        let fitnessMode = false;
-        const modeToggle = document.querySelector('.mode-toggle');
-        const body = document.querySelector('body');
-        
-        // Engineer and fitness content
-        const engineerContent = {
-            profileImg: 'nrcds5xpf7.jpg',
-            title: {
-                main: 'エンジニア',
-                sub: 'ライフ'
-            },
-            subtitle: '学生時代に学生団体の立ち上げからWebサービスの開発まで経験し、そこで得た「アプリケーションで世界を変える」という確信を胸に、大手テックカンパニーに就職。現在は3年目のバックエンドエンジニアとして革新的なプロダクトを開発しています。'
-        };
-        
-        const fitnessContent = {
-            profileImg: 'u35monalpx.jpg',
-            title: {
-                main: 'フィットネス',
-                sub: 'ライフ'
-            },
-            subtitle: '筋トレ歴5年。エンジニアとしての仕事と並行して、「健全な心は健全な体に宿る」という信念のもと、日々体を鍛えています。テクノロジーと体作りを融合させ、より効率的なトレーニング方法を追求しています。'
-        };
-        
-        modeToggle.addEventListener('click', () => {
-            // Disable further clicks during animation
-            modeToggle.style.pointerEvents = 'none';
-            
-            // Toggle fitness mode
-            fitnessMode = !fitnessMode;
-            
-            // Create multiple layers for epic transition
-            const transitionLayers = [];
-            
-            // Layer 1: Radial explosion
-            const radialLayer = document.createElement('div');
-            radialLayer.style.position = 'fixed';
-            radialLayer.style.top = '50%';
-            radialLayer.style.left = '50%';
-            radialLayer.style.width = '0px';
-            radialLayer.style.height = '0px';
-            radialLayer.style.borderRadius = '50%';
-            radialLayer.style.backgroundColor = fitnessMode ? 'var(--fitness-orange)' : 'var(--neon-blue)';
-            radialLayer.style.zIndex = '9999';
-            radialLayer.style.transform = 'translate(-50%, -50%)';
-            radialLayer.style.transition = 'width 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), height 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-            document.body.appendChild(radialLayer);
-            transitionLayers.push(radialLayer);
-            
-            // Layer 2: Screen overlay with gradient
-            const overlayLayer = document.createElement('div');
-            overlayLayer.style.position = 'fixed';
-            overlayLayer.style.top = '0';
-            overlayLayer.style.left = '0';
-            overlayLayer.style.width = '100vw';
-            overlayLayer.style.height = '100vh';
-            overlayLayer.style.background = `linear-gradient(45deg, 
-                ${fitnessMode ? 'var(--fitness-orange)' : 'var(--neon-blue)'} 0%, 
-                ${fitnessMode ? 'var(--fitness-red)' : 'var(--electric-purple)'} 50%, 
-                ${fitnessMode ? 'var(--fitness-gold)' : 'var(--cyber-pink)'} 100%)`;
-            overlayLayer.style.zIndex = '10000';
-            overlayLayer.style.opacity = '0';
-            overlayLayer.style.transition = 'opacity 0.6s ease';
-            document.body.appendChild(overlayLayer);
-            transitionLayers.push(overlayLayer);
-            
-            // Layer 3: Particle explosion
-            const particleContainer = document.createElement('div');
-            particleContainer.style.position = 'fixed';
-            particleContainer.style.top = '0';
-            particleContainer.style.left = '0';
-            particleContainer.style.width = '100vw';
-            particleContainer.style.height = '100vh';
-            particleContainer.style.zIndex = '10001';
-            particleContainer.style.pointerEvents = 'none';
-            document.body.appendChild(particleContainer);
-            transitionLayers.push(particleContainer);
-            
-            // Create particles
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.style.position = 'absolute';
-                particle.style.width = Math.random() * 8 + 4 + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.borderRadius = '50%';
-                particle.style.backgroundColor = fitnessMode ? 'var(--fitness-gold)' : 'var(--cyber-pink)';
-                particle.style.left = '50%';
-                particle.style.top = '50%';
-                particle.style.transform = 'translate(-50%, -50%)';
-                particle.style.opacity = '0';
-                
-                const angle = (Math.PI * 2 * i) / 30;
-                const distance = Math.random() * 300 + 200;
-                const targetX = Math.cos(angle) * distance;
-                const targetY = Math.sin(angle) * distance;
-                
-                particle.style.transition = `transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 1.2s ease`;
-                particleContainer.appendChild(particle);
-                
-                setTimeout(() => {
-                    particle.style.opacity = '1';
-                    particle.style.transform = `translate(calc(-50% + ${targetX}px), calc(-50% + ${targetY}px)) scale(0)`;
-                }, 300);
-            }
-            
-            // Main transition icon with dramatic effects
-            const iconContainer = document.createElement('div');
-            iconContainer.style.position = 'fixed';
-            iconContainer.style.top = '50%';
-            iconContainer.style.left = '50%';
-            iconContainer.style.transform = 'translate(-50%, -50%)';
-            iconContainer.style.zIndex = '10002';
-            iconContainer.style.transition = 'transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-            document.body.appendChild(iconContainer);
-            transitionLayers.push(iconContainer);
-            
-            const icon = document.createElement('div');
-            icon.style.fontSize = '8rem';
-            icon.style.color = 'white';
-            icon.style.textShadow = `0 0 30px ${fitnessMode ? 'var(--fitness-orange)' : 'var(--neon-blue)'}`;
-            icon.style.transform = 'scale(0) rotate(0deg)';
-            icon.style.transition = 'transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), text-shadow 0.8s ease';
-            icon.innerHTML = fitnessMode ? '<i class="fas fa-dumbbell"></i>' : '<i class="fas fa-laptop-code"></i>';
-            iconContainer.appendChild(icon);
-            
-            // Screen shake effect
-            document.body.style.animation = 'screenShake 0.6s ease-in-out';
-            
-            // Start animation sequence
-            setTimeout(() => {
-                // Radial explosion
-                radialLayer.style.width = '300vw';
-                radialLayer.style.height = '300vh';
-                
-                // Overlay fade in
-                setTimeout(() => {
-                    overlayLayer.style.opacity = '0.9';
-                }, 100);
-                
-                // Icon animation
-                setTimeout(() => {
-                    icon.style.transform = 'scale(1.2) rotate(360deg)';
-                    icon.style.textShadow = `0 0 50px ${fitnessMode ? 'var(--fitness-gold)' : 'var(--cyber-pink)'}`;
-                }, 200);
-                
-                // Apply mode changes
-                setTimeout(() => {
-                    if (fitnessMode) {
-                        body.classList.add('fitness-mode');
-                        modeToggle.innerHTML = '<i class="fas fa-laptop-code"></i>';
-                        document.querySelector('.engineer-only').style.display = 'none';
-                        document.querySelector('.fitness-only').style.display = 'block';
-                    } else {
-                        body.classList.remove('fitness-mode');
-                        modeToggle.innerHTML = '<i class="fas fa-dumbbell"></i>';
-                        document.querySelector('.engineer-only').style.display = 'block';
-                        document.querySelector('.fitness-only').style.display = 'none';
-                    }
-                    
-                    // Update content with dramatic effect
-                    const content = fitnessMode ? fitnessContent : engineerContent;
-                    const heroImage = document.getElementById('hero-profile-img');
-                    const titleMain = document.querySelector('.title-main');
-                    const titleSub = document.querySelector('.title-sub');
-                    const heroSubtitle = document.querySelector('.hero-subtitle');
-                    
-                    // Dramatic content transition
-                    [heroImage, titleMain, titleSub, heroSubtitle].forEach((element, index) => {
-                        if (element) {
-                            element.style.transform = 'scale(0.8) rotateY(90deg)';
-                            element.style.transition = 'transform 0.5s ease';
-                            
-                            setTimeout(() => {
-                                if (element === heroImage) {
-                                    element.src = content.profileImg;
-                                    element.style.objectPosition = fitnessMode ? '20% center' : 'center center';
-                                } else if (element === titleMain) {
-                                    element.textContent = content.title.main;
-                                } else if (element === titleSub) {
-                                    element.textContent = content.title.sub;
-                                } else if (element === heroSubtitle) {
-                                    element.textContent = content.subtitle;
-                                }
-                                
-                                element.style.transform = 'scale(1) rotateY(0deg)';
-                            }, 250 + index * 100);
-                        }
-                    });
-                    
-                    // Progress bars animation
-                    if (fitnessMode) {
-                        setTimeout(() => initProgressBars(), 800);
-                    }
-                    
-                }, 600);
-                
-                // Clean up transition
-                setTimeout(() => {
-                    // Fade out all layers
-                    transitionLayers.forEach((layer, index) => {
-                        setTimeout(() => {
-                            if (layer === overlayLayer) {
-                                layer.style.opacity = '0';
-                            } else if (layer === iconContainer) {
-                                layer.style.transform = 'translate(-50%, -50%) scale(0)';
-                            } else if (layer === radialLayer) {
-                                layer.style.opacity = '0';
-                            } else {
-                                layer.style.opacity = '0';
-                            }
-                        }, index * 100);
-                    });
-                    
-                    // Remove all transition elements
-                    setTimeout(() => {
-                        transitionLayers.forEach(layer => {
-                            if (layer.parentNode) {
-                                layer.parentNode.removeChild(layer);
-                            }
-                        });
-                        
-                        // Re-enable toggle button
-                        modeToggle.style.pointerEvents = 'auto';
-                        document.body.style.animation = '';
-                    }, 800);
-                }, 1200);
-                
-            }, 100);
-        });
-        
-        // Initialize progress bars with animation
-        function initProgressBars() {
-            const progressBars = document.querySelectorAll('.progress-fill');
-            progressBars.forEach(bar => {
-                const width = bar.getAttribute('data-width');
-                setTimeout(() => {
-                    bar.style.width = width;
-                }, 300);
-            });
-        }
-        
-        // Loader
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.querySelector('.loader-wrapper').style.opacity = '0';
-                setTimeout(() => {
-                    document.querySelector('.loader-wrapper').style.display = 'none';
-                }, 800);
-            }, 1500);
-            
-            // Initialize progress bars if in fitness mode
-            if (body.classList.contains('fitness-mode')) {
-                initProgressBars();
-            }
-        });
-        
-        // Initialize - Hide fitness section by default
-        document.querySelector('.fitness-only').style.display = 'none';
-    </script>
+</section>
+
+<section id="skills" class="section skills-section">
+    <div class="container">
+        <div class="section-header fade-in">
+            <h2 class="section-title">SKILLS</h2>
+            <p class="section-subtitle">Technologies and tools I work with</p>
+        </div>
+
+        <div class="skills-grid">
+            <div class="skill-category fade-in">
+                <div class="skill-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3 class="skill-title">言語</h3>
+                <div class="skill-list">
+                    <span class="skill-item">Java</span>
+                    <span class="skill-item">Python</span>
+                    <span class="skill-item">JavaScript</span>
+                    <span class="skill-item">TypeScript</span>
+                    <span class="skill-item">Go</span>
+                </div>
+            </div>
+
+            <div class="skill-category fade-in">
+                <div class="skill-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h3 class="skill-title">フレームワーク</h3>
+                <div class="skill-list">
+                    <span class="skill-item">React</span>
+                    <span class="skill-item">Spring Boot</span>
+                    <span class="skill-item">Django</span>
+                    <span class="skill-item">Next.js</span>
+                    <span class="skill-item">Flutter</span>
+                </div>
+            </div>
+
+            <div class="skill-category fade-in">
+                <div class="skill-icon">
+                    <i class="fas fa-server"></i>
+                </div>
+                <h3 class="skill-title">インフラ</h3>
+                <div class="skill-list">
+                    <span class="skill-item">Docker</span>
+                    <span class="skill-item">Kubernetes</span>
+                    <span class="skill-item">CI/CD</span>
+                    <span class="skill-item">AWS</span>
+                    <span class="skill-item">GCP</span>
+                </div>
+            </div>
+
+            <div class="skill-category fade-in">
+                <div class="skill-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3 class="skill-title">データベース</h3>
+                <div class="skill-list">
+                    <span class="skill-item">MySQL</span>
+                    <span class="skill-item">PostgreSQL</span>
+                    <span class="skill-item">MongoDB</span>
+                    <span class="skill-item">Redis</span>
+                    <span class="skill-item">Cassandra</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="progress" class="section progress-section">
+    <div class="container">
+        <div class="section-header fade-in">
+            <h2 class="section-title">PROGRESS</h2>
+            <p class="section-subtitle">Tracking my fitness journey and achievements</p>
+        </div>
+
+        <div class="transformation-container fade-in">
+            <h3 class="transformation-title">Body Transformation</h3>
+            <div class="transformation-images">
+                <div class="image-container">
+                    <h4>Before</h4>
+                    <div class="before-image">
+                        <img src="4f2mgy7li4.jpg" alt="Before Transformation">
+                    </div>
+                </div>
+                <div class="image-container">
+                    <h4>After</h4>
+                    <div class="after-image">
+                        <img src="fg719hyg1e.jpg" alt="After Transformation">
+                    </div>
+                </div>
+            </div>
+            <p class="transformation-caption">3年間のトレーニングによる体の変化。継続は力なり。</p>
+        </div>
+
+        <div class="progress-stats">
+            <div class="stat-card fade-in">
+                <i class="fas fa-dumbbell fa-3x" style="color: var(--neon-blue); margin-bottom: 15px;"></i>
+                <div class="stat-value">100kg</div>
+                <div class="stat-label">ベンチプレス</div>
+            </div>
+
+            <div class="stat-card fade-in">
+                <i class="fas fa-weight-hanging fa-3x" style="color: var(--neon-blue); margin-bottom: 15px;"></i>
+                <div class="stat-value">200kg</div>
+                <div class="stat-label">デッドリフト</div>
+            </div>
+
+            <div class="stat-card fade-in">
+                <i class="fas fa-running fa-3x" style="color: var(--neon-blue); margin-bottom: 15px;"></i>
+                <div class="stat-value">140kg</div>
+                <div class="stat-label">スクワット</div>
+            </div>
+        </div>
+
+        <div class="progress-bars fade-in">
+            <div class="progress-item">
+                <div class="progress-header">
+                    <span class="progress-name">筋肉量</span>
+                    <span class="progress-percent">85%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;" data-width="85%"></div>
+                </div>
+            </div>
+
+            <div class="progress-item">
+                <div class="progress-header">
+                    <span class="progress-name">持久力</span>
+                    <span class="progress-percent">70%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;" data-width="70%"></div>
+                </div>
+            </div>
+
+            <div class="progress-item">
+                <div class="progress-header">
+                    <span class="progress-name">食事管理</span>
+                    <span class="progress-percent">65%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;" data-width="65%"></div>
+                </div>
+            </div>
+
+            <div class="progress-item">
+                <div class="progress-header">
+                    <span class="progress-name">柔軟性</span>
+                    <span class="progress-percent">50%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;" data-width="50%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="section">
+    <div class="container">
+        <div class="section-header fade-in">
+            <h2 class="section-title">CONTACT</h2>
+            <p class="section-subtitle">Get in touch with me for collaborations or inquiries</p>
+        </div>
+
+        <div class="contact-form fade-in">
+            <div class="form-group">
+                <label for="name" class="form-label">お名前</label>
+                <input type="text" id="name" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">メールアドレス</label>
+                <input type="email" id="email" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label for="message" class="form-label">メッセージ</label>
+                <textarea id="message" class="form-textarea" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                送信する
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="social-links">
+            <a href="https://x.com/EngineerMacho" class="social-link" target="_blank">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://github.com/mamorubaseball" class="social-link" target="_blank">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://www.instagram.com/bodymakeengineer/" class="social-link" target="_blank">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://mammoblog.com/" class="social-link" target="_blank">
+                <i class="fas fa-blog"></i>
+            </a>
+        </div>
+
+        <p style="color: var(--text-secondary); margin-top: 20px;">&copy; 2025 エンジニアライフ. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<div class="mode-toggle">
+    <i class="fas fa-dumbbell"></i>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
