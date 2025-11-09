@@ -951,6 +951,28 @@ body.fitness-mode .progress-section {
   20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
+@keyframes slideInRight {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+}
+
 .text-gradient {
   background: linear-gradient(45deg, var(--neon-blue), var(--electric-purple));
   -webkit-background-clip: text;
