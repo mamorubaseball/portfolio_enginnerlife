@@ -6,6 +6,7 @@
     <title>エンジニアライフ - Modern Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 <div class="custom-cursor"></div>
@@ -43,7 +44,8 @@
                 <span class="title-sub">ライフ</span>
             </h1>
             <p class="hero-subtitle">
-                学生時代に学生団体の立ち上げからWebサービスの開発まで経験し、そこで得た「アプリケーションで世界を変える」という確信を胸に、大手テックカンパニーに就職。現在は3年目のバックエンドエンジニアとして革新的なプロダクトを開発しています。
+                「アプリケーションは世界を変える」という確信を胸に、大手テックカンパニーに就職。
+                現在は3年目のバックエンドエンジニアとしてプロダクト開発に携わっています。
             </p>
             <div class="hero-cta">
                 <a href="#projects" class="btn btn-primary">
@@ -152,7 +154,6 @@
                     <span class="skill-item">Spring Boot</span>
                     <span class="skill-item">Django</span>
                     <span class="skill-item">Next.js</span>
-                    <span class="skill-item">Flutter</span>
                 </div>
             </div>
 
@@ -177,8 +178,7 @@
                 <h3 class="skill-title">データベース</h3>
                 <div class="skill-list">
                     <span class="skill-item">MySQL</span>
-                    <span class="skill-item">PostgreSQL</span>
-                    <span class="skill-item">MongoDB</span>
+                    <span class="skill-item">Hadoop</span>
                     <span class="skill-item">Redis</span>
                     <span class="skill-item">Cassandra</span>
                 </div>
@@ -284,27 +284,27 @@
             <p class="section-subtitle">Get in touch with me for collaborations or inquiries</p>
         </div>
 
-        <div class="contact-form fade-in">
+        <form id="contact-form" class="contact-form fade-in">
             <div class="form-group">
                 <label for="name" class="form-label">お名前</label>
-                <input type="text" id="name" class="form-input" required>
+                <input type="text" id="name" name="name" class="form-input" required>
             </div>
 
             <div class="form-group">
                 <label for="email" class="form-label">メールアドレス</label>
-                <input type="email" id="email" class="form-input" required>
+                <input type="email" id="email" name="email" class="form-input" required>
             </div>
 
             <div class="form-group">
                 <label for="message" class="form-label">メッセージ</label>
-                <textarea id="message" class="form-textarea" required></textarea>
+                <textarea id="message" name="message" class="form-textarea" required></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary" style="width: 100%;">
                 送信する
                 <i class="fas fa-paper-plane"></i>
             </button>
-        </div>
+        </form>
     </div>
 </section>
 

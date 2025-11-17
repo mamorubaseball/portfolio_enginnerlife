@@ -373,3 +373,106 @@ window.addEventListener('load', () => {
 
 // Initialize - Hide fitness section by default
 document.querySelector('.fitness-only').style.display = 'none';
+
+// EmailJS initialization and contact form handling
+(function() {
+  emailjs.init({
+    publicKey: "WzlJhbDBoIyTjT6vp", 
+  });
+})();
+
+// Contact form submission
+const contactForm = document.getElementById('contact-form');
+
+contactForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  // Get button element
+  const submitButton = contactForm.querySelector('button[type="submit"]');
+  const originalButtonText = submitButton.innerHTML;
+
+  // Disable button and show loading state
+  submitButton.disabled = true;
+  submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 送信中...';
+
+  // Send email using EmailJS
+  emailjs.sendForm('service_w6y70z6', 'template_pjhs2nb', this)
+    .then(function() {
+      // Success
+      submitButton.innerHTML = '<i class="fas fa-check"></i> 送信完了！';
+      submitButton.style.backgroundColor = '#10b981';
+
+      // Show success message
+      showNotification('メッセージが送信されました！', 'success');
+
+      // Reset form
+      contactForm.reset();
+
+      // Reset button after 3 seconds
+      setTimeout(() => {
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonText;
+        submitButton.style.backgroundColor = '';
+      }, 3000);
+
+    }, function(error) {
+      // Error
+      console.error('EmailJS Error:', error);
+      submitButton.innerHTML = '<i class="fas fa-times"></i> 送信失敗';
+      submitButton.style.backgroundColor = '#ef4444';
+
+      // Show error message
+      showNotification('送信に失敗しました。もう一度お試しください。', 'error');
+
+      // Reset button after 3 seconds
+      setTimeout(() => {
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonText;
+        submitButton.style.backgroundColor = '';
+      }, 3000);
+    });
+});
+
+// Notification function
+function showNotification(message, type) {
+  // Remove existing notifications
+  const existingNotification = document.querySelector('.notification');
+  if (existingNotification) {
+    existingNotification.remove();
+  }
+
+  // Create notification
+  const notification = document.createElement('div');
+  notification.classList.add('notification', type);
+  notification.textContent = message;
+
+  // Styles
+  notification.style.position = 'fixed';
+  notification.style.top = '20px';
+  notification.style.right = '20px';
+  notification.style.padding = '15px 25px';
+  notification.style.borderRadius = '8px';
+  notification.style.zIndex = '99999';
+  notification.style.fontSize = '16px';
+  notification.style.fontWeight = '500';
+  notification.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
+  notification.style.animation = 'slideInRight 0.4s ease';
+
+  if (type === 'success') {
+    notification.style.backgroundColor = '#10b981';
+    notification.style.color = 'white';
+  } else {
+    notification.style.backgroundColor = '#ef4444';
+    notification.style.color = 'white';
+  }
+
+  document.body.appendChild(notification);
+
+  // Remove after 5 seconds
+  setTimeout(() => {
+    notification.style.animation = 'slideOutRight 0.4s ease';
+    setTimeout(() => {
+      notification.remove();
+    }, 400);
+  }, 5000);
+}
